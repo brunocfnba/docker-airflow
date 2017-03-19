@@ -25,3 +25,7 @@ The airflow.cfg file is where all the settings used by Airflow are stored. This 
 * It's also required to run a python script when creating the container so the first user can be created. Other user can be created within the Airflow UI.
   * Edit the `set_auth.py` file and add the desired username, e-mail and password.
 > There are other methods of authentication in Airflow like LDAP. I using the web method. Go to [Airflow Offical Web Site - Security](https://airflow.incubator.apache.org/security.html) for more.
+
+##### 3. SMTP
+* Airflow has a feature to send e-mails when different actions happen with DAGs in execution like a task failed, retry or success. To do so, provide the SMTP server information in the airflow.cfg file. Look for the `[smtp]` block.
+* For this setup gmail SMTP has been used. Replace the information there with the ones from your SMTP server.
