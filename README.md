@@ -29,3 +29,29 @@ The airflow.cfg file is where all the settings used by Airflow are stored. This 
 ##### 3. SMTP
 * Airflow has a feature to send e-mails when different actions happen with DAGs in execution like a task failed, retry or success. To do so, provide the SMTP server information in the airflow.cfg file. Look for the `[smtp]` block.
 * For this setup gmail SMTP has been used. Replace the information there with the ones from your SMTP server.
+
+
+### Running on premisses
+Follow these instructions to setup on your own environment.
+
+1. Build the image from Dockerfile
+```
+docker build -t airflow .
+```
+> You must run the above command in the same path as you Dockerfile.
+> -t defines the image name.
+
+2. Create the respective volumes
+* The `/home/airflow/dags` folder should be shared by all containers (webserver and scheduler in this case). Edit the `docker-compose-airflow.yml` file and replace `/your/path` with your local file system path.
+* The logs volume was defined since it's not a good practice keep the logs within the container. Feel free to also send them to some cloud storage server.
+>View the Logs session in the Airflow Web Site Configuration page for more information.
+
+3. Run the `docker-compose-airflow.yml` file
+```
+docker-compose -f docker-compose-airflow.yml up -d
+```
+> `-f` specifies the yml file name and `-d` to run as a deamon.
+
+4. Check the container are up and running
+* Run `docker ps -a` and check there are two containers (airflow-web adn aiflow-scheduler) running.
+* You should also be able to access the webserver UI on localhost or if you are using boot2docker use the virtua machine IP address (run `docker-machine ip`) to get that.
