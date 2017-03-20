@@ -1,0 +1,26 @@
+webserver:
+        image: registry.ng.bluemix.net/<your registry name>/airflow-web:latest
+        #image: airflow:latest
+        restart: always
+        container_name: airflow-web
+        volumes:
+             - general:/home/airflow/general:rw
+             - dags:/home/airflow/dags:rw
+             - logs:/home/airflow/logs:rw
+             
+        ports:
+            - "8080:8080"
+        entrypoint: /home/airflow/webserver_entrypoint.sh
+        user: airflow
+
+    scheduler:
+        image: registry.ng.bluemix.net/<your registry name>/airflow-scheduler:latest
+        #image: airflow:latest
+        restart: always
+        container_name: airflow-scheduler
+        volumes:
+             - general:/home/airflow/general:rw
+             - dags:/home/airflow/dags:rw
+             - logs:/home/airflow/logs:rw
+        entrypoint: /home/airflow/scheduler_entrypoint.sh
+        user: airflow
