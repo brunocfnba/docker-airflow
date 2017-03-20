@@ -1,6 +1,5 @@
 webserver:
         image: registry.ng.bluemix.net/<your registry name>/airflow-web:latest
-        #image: airflow:latest
         restart: always
         container_name: airflow-web
         volumes:
@@ -15,7 +14,6 @@ webserver:
 
     scheduler:
         image: registry.ng.bluemix.net/<your registry name>/airflow-scheduler:latest
-        #image: airflow:latest
         restart: always
         container_name: airflow-scheduler
         volumes:
