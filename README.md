@@ -55,3 +55,66 @@ docker-compose -f docker-compose-airflow.yml up -d
 4. Check the container are up and running
 * Run `docker ps -a` and check there are two containers (airflow-web adn aiflow-scheduler) running.
 * You should also be able to access the webserver UI on localhost or if you are using boot2docker use the virtua machine IP address (run `docker-machine ip`) to get that.
+
+### Running on IBM Bluemix
+
+Bluemix offers Docker containers so you don't have to use your own infrastructure.
+I'll walk you through the container creation within Bluemix which slightly differ from the normal one we did previoously.
+
+##### 1. Create Bluemix account and install the required software in your machine to handle docker container
+First go to [www.bluemix.net](http://www.bluemix.net) and follow the steps presented there to create your account.
+
+Now access the [Install IBM Plug-in to work with Docker](https://console.ng.bluemix.net/docs/containers/container_cli_cfic_install.html) link and follow all the instructions in order to have your local environment ready.
+
+Use the files in the bluemix folder to run the following
+
+##### 2. Setup docker environment variables
+To run `docker-compose` commands in Bluemix, first set some environemnt variables as follows.
+* Run `cf ic login` command.
+* Copy and paste the three environemnt variables set.
+```
+export DOCKER_HOST=tcp://containers-api.ng.bluemix.net:8443
+export DOCKER_CERT_PATH=...
+export DOCKER_TLS_VERIFY=1
+```
+
+##### 3. Build the image in Bluemix
+Due to some issues found in with Bluemix containers when running the entrypoint, two Dockerfiles were created.
+Build both of them.
+```
+docker build -t airflow-web -f Dockerfile_web .
+docker build -t airflow-scheduler -f Dockerfile_scheduler .
+```
+> You must run the above command in the same path as you Dockerfile.
+> -t defines the image name.
+
+##### 4. Create data volumes on Bluemix
+
+To share the volumes among the containers create two data volumes (dags and logs)`
+```
+cf ic volume create dags
+cf ic volume create logs
+```
+> Since the environment variables have been set, `cf ic` and `docker` can be used interchangeably.
+
+> For more details on managing volumes on Bluemix go to [Creating volumes using the command line](https://console.ng.bluemix.net/docs/containers/container_volumes_cli.html)
+
+##### 5. Run the `bm-docker-compose-airflow.yml` file
+```
+docker-compose -f bm-docker-compose-airflow.yml up -d
+```
+> `-f` specifies the yml file name and `-d` to run as a deamon.
+
+##### 4. Check the container are up and running
+* Run `docker ps -a` and check there are two containers (airflow-web adn aiflow-scheduler) running.
+
+##### 5. Assign an external IP to the webserver container
+Since the container are running on the cloud, an external IP is required to access the webserver.
+* Request an IP address
+```
+cf ic ip request
+```
+* With the IP, bind it to the webserver container
+```
+cf ic ip bind <your ip address> airflow-web
+```
