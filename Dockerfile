@@ -1,0 +1,70 @@
+#Airflow Image
+FROM ubuntu
+
+ENV AIRFLOW_HOME /home/airflow
+
+RUN apt-get update && apt-get install -y \
+ wget \
+ default-jdk \
+ python2.7 \
+ vim \
+ cron \
+ python-dev \
+ libkrb5-dev \
+ libsasl2-dev \
+ libssl-dev \
+ libffi-dev \
+ build-essential \
+ libblas-dev \
+ liblapack-dev \
+ python-pip \
+ apt-utils \
+ curl \
+ netcat \
+ iputils-ping \
+ openssh-client \
+ python-requests \
+ libpq-dev \
+ && cd /home && mkdir airflow && cd airflow && \
+ service cron stop && cp /usr/share/zoneinfo/GMT /etc/localtime \
+ 
+ && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
+ && pip install --upgrade pip \
+ && pip install Cython \
+ && pip install pytz==2015.7 \
+ && pip install jinja2==2.8.1 \
+ && pip install cryptography \
+ && pip install pyOpenSSL \
+ && pip install ndg-httpsclient \
+ && pip install pyasn1 \
+ && pip install psycopg2 \
+ && pip install pandas==0.18.1 \
+ && pip install slackclient \
+ && pip install ibm_db \
+ && pip install celery==3.1.23 \
+ && pip install flask-bcrypt \
+ && pip install airflow[celery,postgres,hive,hdfs,jdbc,password]==1.7.1.3 \
+ && rm -rf \
+        /var/lib/apt/lists/* \
+        /tmp/* \
+        /var/tmp/* \
+        /usr/share/man \
+        /usr/share/doc \
+        /usr/share/doc-base
+        
+COPY airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
+COPY set_auth.py /home/airflow/set_auth.py
+COPY webserver_entrypoint.sh /home/airflow/webserver_entrypoint.sh
+COPY scheduler_entrypoint.sh /home/airflow/scheduler_entrypoint.sh
+        
+RUN chown -R airflow: ${AIRFLOW_HOME}
+
+RUN chmod 775 ${AIRFLOW_HOME}/webserver_entrypoint.sh
+RUN chmod 775 ${AIRFLOW_HOME}/scheduler_entrypoint.sh
+
+EXPOSE 8080
+
+USER airflow
+WORKDIR ${AIRFLOW_HOME}
+
+ENTRYPOINT ["/home/airflow/webserver_entrypoint.sh"]
