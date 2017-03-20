@@ -100,6 +100,8 @@ cf ic volume create logs
 > For more details on managing volumes on Bluemix go to [Creating volumes using the command line](https://console.ng.bluemix.net/docs/containers/container_volumes_cli.html)
 
 ##### 5. Run the `bm-docker-compose-airflow.yml` file
+By the time this document was written, Bluemix only supports compose file version 1.
+Replace the `<your registry name>` in the bm-docker-compose-airflow.yml with the registry you previously created on Bluemix.
 ```
 docker-compose -f bm-docker-compose-airflow.yml up -d
 ```
