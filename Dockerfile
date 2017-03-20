@@ -67,4 +67,3 @@ EXPOSE 8080
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
 
-ENTRYPOINT ["/home/airflow/webserver_entrypoint.sh"]
