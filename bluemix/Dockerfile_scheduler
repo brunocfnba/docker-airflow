@@ -25,9 +25,10 @@ RUN apt-get update && apt-get install -y \
  openssh-client \
  python-requests \
  libpq-dev \
+ libmysqlclient-dev \
  && cd /home && mkdir airflow && cd airflow && \
- service cron stop && cp /usr/share/zoneinfo/GMT /etc/localtime \
- 
+ service cron stop \
+
  && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
  && pip install --upgrade pip \
  && pip install Cython \
@@ -43,7 +44,7 @@ RUN apt-get update && apt-get install -y \
  && pip install pandas==0.18.1 \
  && pip install celery==3.1.23 \
  && pip install flask-bcrypt \
- && pip install airflow[celery,postgres,hive,hdfs,jdbc,password]==1.7.1.3 \
+ && pip install airflow[celery,postgres,hive,hdfs,jdbc,password,mysql]==1.8.0 \
  && rm -rf \
         /var/lib/apt/lists/* \
         /tmp/* \
@@ -51,17 +52,18 @@ RUN apt-get update && apt-get install -y \
         /usr/share/man \
         /usr/share/doc \
         /usr/share/doc-base
-        
+
 COPY airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 COPY set_auth.py /home/airflow/set_auth.py
-COPY start_airflow.sh /home/airflow/start_airflow.sh        
 COPY webserver_entrypoint.sh /home/airflow/webserver_entrypoint.sh
 COPY scheduler_entrypoint.sh /home/airflow/scheduler_entrypoint.sh
-        
+
 RUN chown -R airflow: ${AIRFLOW_HOME}
 
 RUN chmod 775 ${AIRFLOW_HOME}/webserver_entrypoint.sh
 RUN chmod 775 ${AIRFLOW_HOME}/scheduler_entrypoint.sh
+
+EXPOSE 8080
 
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
