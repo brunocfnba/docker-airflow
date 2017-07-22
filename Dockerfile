@@ -25,8 +25,9 @@ RUN apt-get update && apt-get install -y \
  openssh-client \
  python-requests \
  libpq-dev \
+ libmysqlclient-dev \
  && cd /home && mkdir airflow && cd airflow && \
- service cron stop && cp /usr/share/zoneinfo/GMT /etc/localtime \
+ service cron stop \
  
  && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
  && pip install --upgrade pip \
@@ -43,7 +44,7 @@ RUN apt-get update && apt-get install -y \
  && pip install ibm_db \
  && pip install celery==3.1.23 \
  && pip install flask-bcrypt \
- && pip install airflow[celery,postgres,hive,hdfs,jdbc,password]==1.7.1.3 \
+ && pip install airflow[celery,postgres,hive,hdfs,jdbc,password,mysql]==1.8.0 \
  && rm -rf \
         /var/lib/apt/lists/* \
         /tmp/* \
