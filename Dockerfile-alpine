@@ -1,0 +1,78 @@
+#Airflow Image
+FROM alpine:3.6
+
+ENV AIRFLOW_HOME /home/airflow
+
+ENV PACKAGES="\
+  mariadb-dev \
+  dumb-init \
+  musl \
+  linux-headers \
+  build-base \
+  ca-certificates \
+  python2 \
+  python2-dev \
+  py-setuptools \
+  openssh \
+  libffi-dev \
+  libxml2-dev \
+  libxslt-dev \
+"
+
+RUN echo \
+  # replacing default repositories with edge ones
+  && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" > /etc/apk/repositories \
+  && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
+  && echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
+
+  #updating packages to avoid version issues
+  && apk --update upgrade \
+
+  # Add the packages, with a CDN-breakage fallback if needed
+  && apk add --no-cache $PACKAGES || \
+    (sed -i -e 's/dl-cdn/dl-4/g' /etc/apk/repositories && apk add --no-cache $PACKAGES) \
+
+  # make some useful symlinks that are expected to exist
+  && if [[ ! -e /usr/bin/python ]];        then ln -sf /usr/bin/python2.7 /usr/bin/python; fi \
+  && if [[ ! -e /usr/bin/python-config ]]; then ln -sf /usr/bin/python2.7-config /usr/bin/python-config; fi \
+  && if [[ ! -e /usr/bin/easy_install ]];  then ln -sf /usr/bin/easy_install-2.7 /usr/bin/easy_install; fi \
+
+  && cd /home && mkdir airflow && cd airflow \
+
+  && adduser -S airflow \
+  && easy_install pip \
+
+  && pip install --upgrade pip \
+  && pip install Cython \
+  && pip install pytz==2015.7 \
+  && pip install jinja2==2.8.1 \
+  && pip install cryptography \
+  && pip install pyOpenSSL \
+  && pip install ndg-httpsclient \
+  && pip install pyasn1 \
+  && pip install slackclient \
+  && pip install ibm_db \
+  && pip install flask-bcrypt \
+  && pip install airflow[jdbc,password,mysql]==1.8.0 \
+  && rm -rf \
+        /tmp/* \
+        /var/tmp/* \
+        /usr/share/man \
+        /usr/share/doc
+
+COPY airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
+COPY set_auth.py /home/airflow/set_auth.py
+COPY webserver_entrypoint.sh /home/airflow/webserver_entrypoint.sh
+COPY scheduler_entrypoint.sh /home/airflow/scheduler_entrypoint.sh
+
+RUN chown -R airflow: ${AIRFLOW_HOME}
+
+RUN chmod 775 ${AIRFLOW_HOME}/webserver_entrypoint.sh
+RUN chmod 775 ${AIRFLOW_HOME}/scheduler_entrypoint.sh
+
+EXPOSE 8080
+
+USER airflow
+WORKDIR ${AIRFLOW_HOME}
+
+#ENTRYPOINT ["/home/airflow/webserver_entrypoint.sh"]
