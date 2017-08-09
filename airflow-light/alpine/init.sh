@@ -34,7 +34,6 @@ else
   apk add --no-cache libxml2-dev
   apk add --no-cache libxslt-dev
   apk add --no-cache py-psycopg2
-  libc6-compat
 
   if [[ ! -e /usr/bin/python ]];        then ln -sf /usr/bin/python2.7 /usr/bin/python; fi
   if [[ ! -e /usr/bin/python-config ]]; then ln -sf /usr/bin/python2.7-config /usr/bin/python-config; fi
