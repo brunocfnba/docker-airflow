@@ -26,6 +26,8 @@ RUN apt-get update && apt-get install -y \
  python-requests \
  libpq-dev \
  libmysqlclient-dev \
+ sshpass \
+ sudo \
 
  && service cron stop \
 
