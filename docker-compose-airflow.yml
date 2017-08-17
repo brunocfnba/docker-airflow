@@ -3,22 +3,24 @@ services:
     webserver:
         image: airflow:latest
         container_name: airflow-web
+        env_file:
+            - env_vars_web
         volumes:
              - /your/path/dags:/home/airflow/dags
              - /your/path/logs:/home/airflow/logs
         ports:
             - "8080:8080"
-        entrypoint: /home/airflow/webserver_entrypoint.sh
         user: airflow
 
 
     scheduler:
         image: airflow:latest
         container_name: airflow-scheduler
+        env_file:
+            - env_vars_scheduler
         depends_on:
             - webserver
         volumes:
              - /your/path/dags:/home/airflow/dags
              - /your/path/logs:/home/airflow/logs
-        entrypoint: /home/airflow/scheduler_entrypoint.sh
         user: airflow
