@@ -1,5 +1,5 @@
 #Airflow Image
-FROM ubuntu
+FROM ubuntu:16.04
 
 ENV AIRFLOW_HOME /home/airflow
 
@@ -26,9 +26,9 @@ RUN apt-get update && apt-get install -y \
  python-requests \
  libpq-dev \
  libmysqlclient-dev \
- && cd /home && mkdir airflow && cd airflow && \
- service cron stop \
- 
+
+ && service cron stop \
+
  && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
  && pip install --upgrade pip \
  && pip install Cython \
@@ -39,12 +39,10 @@ RUN apt-get update && apt-get install -y \
  && pip install ndg-httpsclient \
  && pip install pyasn1 \
  && pip install psycopg2 \
- && pip install pandas==0.18.1 \
  && pip install slackclient \
  && pip install ibm_db \
- && pip install celery==3.1.23 \
  && pip install flask-bcrypt \
- && pip install airflow[celery,postgres,hive,hdfs,jdbc,password,mysql]==1.8.0 \
+ && pip install airflow[postgres,jdbc,password,mysql]==1.8.0 \
  && rm -rf \
         /var/lib/apt/lists/* \
         /tmp/* \
@@ -52,19 +50,16 @@ RUN apt-get update && apt-get install -y \
         /usr/share/man \
         /usr/share/doc \
         /usr/share/doc-base
-        
-COPY airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
-COPY set_auth.py /home/airflow/set_auth.py
-COPY webserver_entrypoint.sh /home/airflow/webserver_entrypoint.sh
-COPY scheduler_entrypoint.sh /home/airflow/scheduler_entrypoint.sh
-        
-RUN chown -R airflow: ${AIRFLOW_HOME}
 
-RUN chmod 775 ${AIRFLOW_HOME}/webserver_entrypoint.sh
-RUN chmod 775 ${AIRFLOW_HOME}/scheduler_entrypoint.sh
+COPY airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
+COPY init.sh ${AIRFLOW_HOME}/init.sh
+COPY set_auth.py /home/airflow/set_auth.py
+
+RUN chown -R airflow: ${AIRFLOW_HOME} && chmod -R 775 ${AIRFLOW_HOME}
 
 EXPOSE 8080
 
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
 
+ENTRYPOINT ["sh", "/home/airflow/init.sh"]
