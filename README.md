@@ -13,17 +13,13 @@ I picked PostgreSQL database since it's recommended by the community but there a
 The airflow.cfg file is where all the settings used by Airflow are stored. This file is located in the AIRFLOW_HOME where Airflow looks for it after installation.
 > All this setup has already been done in the Dockerfiles provided.
 
-##### 1. Database
-* Look for the `sql_alchemy_conn = ` line in the airflow.cfg file and replace with the connection string from your datbase following the model provided.
-> For more on Airflow and databases: [Airflow Offical Web Site - Configuration](https://airflow.incubator.apache.org/configuration.html).
-
-##### 2. Authentication
+##### 1. Authentication
 * To enable authentication when accessing the UI interface this line in the airflow.cfg file `authenticate = True` must be set to true (already done in the file provided).
 * It's also required to run a python script when creating the container so the first user can be created. Other user can be created within the Airflow UI.
   * Edit the `set_auth.py` file and add the desired username, e-mail and password.
 > There are other methods of authentication in Airflow like LDAP. I using the web method. Go to [Airflow Offical Web Site - Security](https://airflow.incubator.apache.org/security.html) for more.
 
-##### 3. SMTP
+##### 2. SMTP
 * Airflow has a feature to send e-mails when different actions happen with DAGs in execution like a task failed, retry or success. To do so, provide the SMTP server information in the airflow.cfg file. Look for the `[smtp]` block.
 * For this setup gmail SMTP has been used. Replace the information there with the ones from your SMTP server.
 
@@ -42,6 +38,21 @@ docker build -t airflow .
 * The `/home/airflow/dags` folder should be shared by all containers (webserver and scheduler in this case). Edit the `docker-compose-airflow.yml` file and replace `/your/path` with your local file system path.
 * The logs volume was defined since it's not a good practice keep the logs within the container. Feel free to also send them to some cloud storage server.
 >View the Logs session in the Airflow Web Site Configuration page for more information.
+
+3. Populate you 'env_vars' file with all your credentials. This file is not stored withn the container so you don't expose your info. To run in docker compose, create two copies of the 'env_vars' file. Name one 'env_vars_web' and the other 'env_vars_scheduler'. <BR>Make sure to set 'yes' for the web airflow container in the IS_WEB parameter and 'no' for the scheduler container.
+>The env_vars provides all the info so the script know which kind of container create based on the properties below:
+<BR><BR>**DB_USER** - your database username;
+<BR>**DB_PWD** - your database password;
+<BR>**DB_HOST** - your database hostname;
+<BR>**DB_PORT** - your database port;
+<BR>**DB_NAME** - your database name;
+<BR>**USE_WEX** - [yes|no], if you use Watson Explorer set to 'yes' so you can provide the WEX server to enable SSH without password from Airflow to the server - If you say 'no' you don't need to specify the other WEX variables;
+<BR>**WEX_HOST** - the WEX server hostname;
+<BR>**WEX_PORT** - the WEX server port;
+<BR>**WEX_USER** - the WEX server username;
+<BR>**WEX_PWD** - the Wex server password;
+<BR>**IS_WEB** - [yes|no], tells airflow if that container should start the Ariflow webserver or scheduler;
+<BR>**DB_TYPE** - [mysql|postgres], tell Airflow which database is being used.
 
 3. Run the `docker-compose-airflow.yml` file
 ```
