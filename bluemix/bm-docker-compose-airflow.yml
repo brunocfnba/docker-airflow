@@ -2,6 +2,8 @@ webserver:
         image: registry.ng.bluemix.net/<your registry name>/airflow-web:latest
         restart: always
         container_name: airflow-web
+        env_file:
+            - env_vars_web
         volumes:
              - general:/home/airflow/general:rw
              - dags:/home/airflow/dags:rw
@@ -16,6 +18,8 @@ webserver:
         image: registry.ng.bluemix.net/<your registry name>/airflow-scheduler:latest
         restart: always
         container_name: airflow-scheduler
+        env_file:
+            - env_vars_scheduler
         volumes:
              - general:/home/airflow/general:rw
              - dags:/home/airflow/dags:rw
