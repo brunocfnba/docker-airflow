@@ -78,7 +78,7 @@ Use the files in the bluemix folder to run the following
 
 ##### 2. Setup docker environment variables
 To run `docker-compose` commands in Bluemix, first set some environemnt variables as follows.
-* Run `cf ic login` command.
+* Run `bx ic login` command.
 * Copy and paste the three environemnt variables set.
 ```
 export DOCKER_HOST=tcp://containers-api.ng.bluemix.net:8443
@@ -97,8 +97,8 @@ docker build -t airflow  .
 
 To share the volumes among the containers create two data volumes (dags and logs)`
 ```
-cf ic volume create dags
-cf ic volume create logs
+bx ic volume create dags
+bx ic volume create logs
 ```
 > Since the environment variables have been set, `cf ic` and `docker` can be used interchangeably.
 
@@ -120,9 +120,9 @@ docker-compose -f bm-docker-compose-airflow.yml up -d
 Since the container are running on the cloud, an external IP is required to access the webserver.
 * Request an IP address
 ```
-cf ic ip request
+bx ic ip request
 ```
 * With the IP, bind it to the webserver container
 ```
-cf ic ip bind <your ip address> airflow-web
+bx ic ip bind <your ip address> airflow-web
 ```
