@@ -1,0 +1,12 @@
+DB_USER=<db username>
+DB_PWD=<db password>
+DB_HOST=<db hostname>
+DB_PORT=<port>
+DB_NAME=<database name>
+USE_WEX=[yes|no]
+WEX_HOST=<hostname>
+WEX_PORT=<port>
+WEX_USER=<username>
+WEX_PWD=<pwd>
+IS_WEB=[yes|no]
+DB_TYPE=[mysql|postgres]
