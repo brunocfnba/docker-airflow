@@ -87,14 +87,11 @@ export DOCKER_TLS_VERIFY=1
 ```
 
 ##### 3. Build the image in Bluemix
-Due to some issues found in with Bluemix containers when running the entrypoint, two Dockerfiles were created.
-Build both of them.
+Run the following:
 ```
-docker build -t airflow-web -f Dockerfile_web .
-docker build -t airflow-scheduler -f Dockerfile_scheduler .
+docker build -t airflow  .
 ```
 > You must run the above command in the same path as you Dockerfile.
-> -t defines the image name.
 
 ##### 4. Create data volumes on Bluemix
 
@@ -114,6 +111,7 @@ Replace the `<your registry name>` in the bm-docker-compose-airflow.yml with the
 docker-compose -f bm-docker-compose-airflow.yml up -d
 ```
 > `-f` specifies the yml file name and `-d` to run as a deamon.
+> Perform the same changes to the 'env_vars' file as described in the 'Running on Premisses' bullet 3.
 
 ##### 4. Check the container are up and running
 * Run `docker ps -a` and check there are two containers (airflow-web adn aiflow-scheduler) running.
