@@ -40,11 +40,12 @@ RUN apt-get update && apt-get install -y \
  && pip install pyOpenSSL \
  && pip install ndg-httpsclient \
  && pip install pyasn1 \
- && pip install psycopg2 \
+ && pip install psycopg2-binary \
  && pip install slackclient \
  && pip install ibm_db \
  && pip install flask-bcrypt \
- && pip install airflow[postgres,jdbc,password,mysql]==1.8.0 \
+ && pip install 'sqlalchemy<1.2' \
+ && pip install apache-airflow[postgres,jdbc,password,mysql]==1.9.0 \
  && rm -rf \
         /var/lib/apt/lists/* \
         /tmp/* \
