@@ -53,7 +53,8 @@ else
   ibm_db \
   pandas==0.18.1 \
   flask-bcrypt \
-  airflow[celery,postgres,hive,hdfs,jdbc,password,mysql]==1.8.0
+  pip install 'sqlalchemy<1.2' \
+  apache-airflow[celery,postgres,hive,hdfs,jdbc,password,mysql]==1.9.0
 
   rm -rf \
          /var/lib/apt/lists/* \
