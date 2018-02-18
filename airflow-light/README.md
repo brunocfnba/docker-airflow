@@ -1,12 +1,12 @@
 # Light Versions for Aiflow Images
 
-Due to some restrictions inour enviroment we needed to create a very simple image and then run all the container installation during runtime. I know it's not the best practice since we should do it all within the Dockerfile.
+Due to some restrictions in our enviroment we needed to create a very simple image and then run all the container installation during runtime. I know it's not the best practice since we should do it all within the Dockerfile.
 
 I have created one version for Alpine and one for Ubuntu (In their respective directories) since Alpine does not support some IBM DB2 libraries.
 
 To run your container use the following command:
 ```
-bx ic run -d -p8080:8080 --name airflow-scheduler --env-file env_vars airflow_light
+docker run -d -p8080:8080 --name airflow-scheduler --env-file env_vars airflow_light
 ```
 >populate you 'env_vars' file with all your credentials. This file is not stored withn the container so you don't expose your info.
 
